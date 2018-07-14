@@ -12,7 +12,6 @@ const dotenv = require('dotenv');
 const path = require('path');
 const expressValidator = require('express-validator');
 const expressStatusMonitor = require('express-status-monitor');
-const sass = require('node-sass-middleware');
 const multer = require('multer');
 const { createServer } = require('http');
 
@@ -30,11 +29,6 @@ const { schema } = require('./graphql/schema');
 // Connect to DB
 //const DB_URI = 'mongodb://localhost:27017/links';
 //mongoose.connect(DB_URI);
-
-/**
- * Internal Modules
- */
-const { otNodeDataSynchroniser } = require('./modules/OTNode_data_synchroniser/OTNode_data_synchroniser');
 
 /**
  * Load environment variables from .env file, where API keys and passwords are configured.
@@ -57,15 +51,9 @@ const app = express();
  */
 app.set('host', '0.0.0.0');
 app.set('port', 8080);
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'pug');
 
 app.use(expressStatusMonitor());
 app.use(compression());
-app.use(sass({
-  src: path.join(__dirname, 'public'),
-  dest: path.join(__dirname, 'public')
-}));
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -112,20 +100,16 @@ webSocketServer.listen(app.get('port'), () => {
   console.log('%s App is running at http://localhost:%d in %s mode', chalk.green('✓'), app.get('port'), app.get('env'));
   console.log('  Press CTRL-C to stop\n');
 
-	new SubscriptionServer({
-		schema,
-		execute,
-		subscribe,
-	},
-		{
-			server: webSocketServer,
-			path: '/subscriptions'
-		}
-	);
-
-	if(process.env.NODE_ENV !== 'testing'){
-		otNodeDataSynchroniser.start();
-	}
+	//new SubscriptionServer({
+		//schema,
+		//execute,
+		//subscribe,
+	//},
+		//{
+			//server: webSocketServer,
+			//path: '/subscriptions'
+		//}
+	//);
 
 });
 
